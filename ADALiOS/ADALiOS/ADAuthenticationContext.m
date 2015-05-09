@@ -287,6 +287,7 @@ return; \
 -(void) acquireTokenSilentWithResource: (NSString*) resource
                               clientId: (NSString*) clientId
                            redirectUri: (NSURL*) redirectUri
+                  extraQueryParameters: (NSString*) queryParams
                        completionBlock: (ADAuthenticationCallback) completionBlock
 {
     API_ENTRY;
@@ -297,7 +298,7 @@ return; \
                                            silent:YES
                                            userId:nil
                                             scope:nil
-                             extraQueryParameters:nil
+                             extraQueryParameters:queryParams
                                          tryCache:YES
                                 validateAuthority:self.validateAuthority
                                     correlationId:[self getCorrelationId]
@@ -308,6 +309,7 @@ return; \
                               clientId: (NSString*) clientId
                            redirectUri: (NSURL*) redirectUri
                                 userId: (NSString*) userId
+                  extraQueryParameters: (NSString*) queryParams
                        completionBlock: (ADAuthenticationCallback) completionBlock
 {
     API_ENTRY;
@@ -318,7 +320,7 @@ return; \
                                            silent:YES
                                            userId:userId
                                             scope:nil
-                             extraQueryParameters:nil
+                             extraQueryParameters:queryParams
                                          tryCache:YES
                                 validateAuthority:self.validateAuthority
                                     correlationId:[self getCorrelationId]
@@ -343,6 +345,7 @@ return; \
                      resource: (NSString*) resource
                      clientId: (NSString*) clientId
                        userId: (NSString*) userId
+         extraQueryParameters: (NSString*) queryParams
                 correlationId: (NSUUID*) correlationId
               completionBlock: (ADAuthenticationCallback)completionBlock
 {
@@ -376,6 +379,7 @@ return; \
                                       userId:item.userInformation.userId
                                    cacheItem:item
                            validateAuthority:NO /* Done by the caller. */
+                        extraQueryParameters:queryParams
                                correlationId:correlationId
                              completionBlock:^(ADAuthenticationResult *result)
      {
@@ -419,6 +423,7 @@ return; \
                                         resource:resource
                                         clientId:clientId
                                           userId:userId
+                            extraQueryParameters:queryParams
                                    correlationId:correlationId
                                  completionBlock:completionBlock];
                      return;//The call above takes over, no more processing
@@ -486,6 +491,7 @@ return; \
                                       userId:item.userInformation.userId
                                    cacheItem:item
                            validateAuthority:NO /* Done by the caller. */
+                        extraQueryParameters:queryParams
                                correlationId:correlationId
                              completionBlock:^(ADAuthenticationResult *result)
      {
@@ -773,6 +779,7 @@ return; \
                                resource:resource
                                clientId:clientId
                                  userId:userId
+                   extraQueryParameters:nil
                           correlationId:correlationId
                         completionBlock:completionBlock];
             return; //The tryRefreshingFromCacheItem has taken care of the token obtaining
@@ -938,6 +945,7 @@ return; \
 
 -(void) acquireTokenByRefreshToken: (NSString*)refreshToken
                           clientId: (NSString*)clientId
+              extraQueryParameters: (NSString*) queryParams
                    completionBlock: (ADAuthenticationCallback)completionBlock
 {
     API_ENTRY;
@@ -947,6 +955,7 @@ return; \
                                       userId:nil
                                    cacheItem:nil
                            validateAuthority:self.validateAuthority
+                        extraQueryParameters: queryParams
                                correlationId:[self getCorrelationId]
                              completionBlock:completionBlock];
 }
@@ -954,6 +963,7 @@ return; \
 -(void) acquireTokenByRefreshToken:(NSString*)refreshToken
                           clientId:(NSString*)clientId
                           resource:(NSString*)resource
+              extraQueryParameters: (NSString*) queryParams
                    completionBlock:(ADAuthenticationCallback)completionBlock
 {
     API_ENTRY;
@@ -963,6 +973,7 @@ return; \
                                       userId:nil
                                    cacheItem:nil
                            validateAuthority:self.validateAuthority
+                        extraQueryParameters:queryParams
                                correlationId:[self getCorrelationId]
                              completionBlock:completionBlock];
 }
@@ -1064,6 +1075,7 @@ return; \
                                     userId: (NSString*) userId
                                  cacheItem: (ADTokenCacheStoreItem*) cacheItem
                          validateAuthority: (BOOL) validateAuthority
+                      extraQueryParameters: (NSString*) queryParams
                              correlationId: correlationId
                            completionBlock: (ADAuthenticationCallback)completionBlock
 {
@@ -1090,6 +1102,7 @@ return; \
                                                    userId:userId
                                                 cacheItem:cacheItem
                                         validateAuthority:NO /*Already validated in this block. */
+                                     extraQueryParameters: queryParams
                                             correlationId:correlationId
                                           completionBlock:completionBlock];
              }
@@ -1104,7 +1117,11 @@ return; \
                                          refreshToken, OAUTH2_REFRESH_TOKEN,
                                          clientId, OAUTH2_CLIENT_ID,
                                          nil];
-    
+    NSString* endpoint = self.authority;
+    if(queryParams)
+    {
+        endpoint = [NSString stringWithFormat:@"%@?%@", self.authority, queryParams];
+    }
     //The clang analyzer has some issues with the logic inside adIsStringNilOrBlank, as it is defined in a category.
 #ifndef __clang_analyzer__
     if (![NSString adIsStringNilOrBlank:resource])
@@ -1118,7 +1135,7 @@ return; \
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^
                    {
                        AD_LOG_INFO_F(@"Sending request for refreshing token.", @"Client id: '%@'; resource: '%@';", clientId, resource);
-                       [self request:self.authority
+                       [self request:endpoint
                          requestData:request_data
                 requestCorrelationId:correlationId
                 extraQueryParameters:nil

@@ -271,6 +271,7 @@ typedef void(^ADAuthenticationCallback)(ADAuthenticationResult* result);
 -(void) acquireTokenSilentWithResource: (NSString*) resource
                               clientId: (NSString*) clientId
                            redirectUri: (NSURL*) redirectUri
+                  extraQueryParameters: (NSString*) queryParams
                        completionBlock: (ADAuthenticationCallback) completionBlock;
 
 /*! Follows the OAuth2 protocol (RFC 6749). The function will first look at the cache and automatically check for token
@@ -288,6 +289,7 @@ typedef void(^ADAuthenticationCallback)(ADAuthenticationResult* result);
                               clientId: (NSString*) clientId
                            redirectUri: (NSURL*) redirectUri
                                 userId: (NSString*) userId
+                  extraQueryParameters: (NSString*) queryParams
                        completionBlock: (ADAuthenticationCallback) completionBlock;
 
 /*! Follows the OAuth2 protocol (RFC 6749). Uses the refresh token to obtain an access token (and another refresh token). The method

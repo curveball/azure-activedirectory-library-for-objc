@@ -5,19 +5,19 @@
 	<key>AAD Instance</key>
 	<dict>
 		<key>Authority</key>
-		<string>https://login.microsoftonline.com/rmglndpdaadfans.onmicrosoft.com</string>
+		<string>https://login.windows.net/common</string>
 		<key>ClientId</key>
-		<string>b3b5c04f-c5d4-4231-a4e8-a746beea455f</string>
+		<string>d3590ed6-52b3-4102-aeff-aad2292ab01c</string>
 		<key>Resource</key>
-		<string>https://rmglndpdaadfans.onmicrosoft.com/webapi</string>
+		<string>https://officeapps.live.com</string>
 		<key>RedirectUri</key>
-		<string>http://localhost/</string>
+		<string>urn:ietf:wg:oauth:2.0:oob</string>
 		<key>UserId</key>
 		<string></string>
 		<key>Password</key>
 		<string>~test123</string>
 		<key>ExtraQueryParameters</key>
-		<string>p=B2C_1_SignUp&amp;nonce=defaultNonce&amp;scope=openid</string>
+		<string>nux=1</string>
 		<key>RequestTimeout</key>
 		<integer>30</integer>
 		<key>SupportsValidation</key>

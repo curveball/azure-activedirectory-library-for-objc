@@ -161,6 +161,7 @@
     //NSString* __block resourceString = mAADInstance.resource;
     NSString* redirectUri = mAADInstance.redirectUri;
     [weakSelf setStatus:[NSString stringWithFormat:@"Authority: %@", authority]];
+    
     ADAuthenticationContext* context = [ADAuthenticationContext authenticationContextWithAuthority:authority error:&error];
     if (!context)
     {
@@ -169,7 +170,7 @@
     }
     context.parentController = self;
     
-    [context acquireTokenSilentWithResource:resourceString clientId:clientId redirectUri:[NSURL URLWithString:redirectUri] userId:userId completionBlock:^(ADAuthenticationResult *result) {
+    [context acquireTokenSilentWithResource:resourceString clientId:clientId redirectUri:[NSURL URLWithString:redirectUri] userId:userId extraQueryParameters:mAADInstance.extraQueryParameters completionBlock:^(ADAuthenticationResult *result) {
         if (result.status != AD_SUCCEEDED)
         {
             [weakSelf setStatus:result.error.errorDetails];

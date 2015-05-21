@@ -411,6 +411,7 @@ const int sAsyncContextTimeout = 10;
                                              clientId:mClientId
                                           redirectUri:mRedirectURL
                                                userId:mUserId
+                                 extraQueryParameters:nil
                                       completionBlock:callback];
          }
          else

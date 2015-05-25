@@ -1118,10 +1118,7 @@ return; \
                                          clientId, OAUTH2_CLIENT_ID,
                                          nil];
     NSString* endpoint = self.authority;
-    if(queryParams)
-    {
-        endpoint = [NSString stringWithFormat:@"%@?%@", self.authority, queryParams];
-    }
+
     //The clang analyzer has some issues with the logic inside adIsStringNilOrBlank, as it is defined in a category.
 #ifndef __clang_analyzer__
     if (![NSString adIsStringNilOrBlank:resource])
@@ -1138,7 +1135,7 @@ return; \
                        [self request:endpoint
                          requestData:request_data
                 requestCorrelationId:correlationId
-                extraQueryParameters:nil
+                extraQueryParameters:queryParams
          isHandlingPKeyAuthChallenge:FALSE
                    additionalHeaders:nil
                           completion:^(NSDictionary *response)
